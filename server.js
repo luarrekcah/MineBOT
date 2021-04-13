@@ -1,9 +1,8 @@
 const express = require("express");
 const app = express();
 const Discord = require("discord.js");
-
+const mineflayer = require("mineflayer");
 const util = require("minecraft-server-util");
-
 const { pathfinder, Movements, goals } = require("mineflayer-pathfinder");
 const GoalFollow = goals.GoalFollow;
 const GoalBlock = goals.GoalBlock;
@@ -22,13 +21,12 @@ app.get("/", (request, response) => {
 app.listen(process.env.PORT);
 
 const config = {
-  botNick: "Mine-bot",
-  ip: "luarzito.aternos.me",
-  port: 17046
+  botNick: "Bia", //Nome do bot no jogo
+  ip: "bia.bot.minecraft", // IP do servidor
+  port: 00000 // Porta do servidor
 };
 
-// Load mineflayer
-const mineflayer = require("mineflayer");
+
 const connect = {
   host: config.ip,
   port: config.port,
@@ -66,7 +64,7 @@ function followPlayer() {
 
   bot.pathfinder.setMovements(movements);
   console.log(playerCI.entity);
-  const goal = new GoalFollow(playerCI.entity, 1); // default: 1
+  const goal = new GoalFollow(playerCI.entity, 1); // padrao: 1
   bot.pathfinder.setGoal(goal, true);
 }
 
@@ -94,7 +92,7 @@ setInterval(async () => {
       enableSRV: true,
       timeout: 5000,
       protocolVersion: 47
-    }) // These are the default options
+    }) 
     .then(async response => {
       //console.log(response);
 
@@ -124,11 +122,11 @@ client.on("ready", () => {
   }
 });
 
-// Redirect Discord messages to in-game chat
+//Manda as mensagens para o Discord e vice-versa
 client.on("message", message => {
-  // Only handle messages in specified channel
+ 
   if (message.channel.id !== channel.id) return;
-  // Ignore messages from the bot itself
+
   if (message.author.id === client.user.id) return;
 
   bot.chat(`${message.author.username}: ${message.content}`);
@@ -140,7 +138,7 @@ client.on("message", message => {
         enableSRV: true,
         timeout: 5000,
         protocolVersion: 47
-      }) // These are the default options
+      })
       .then(async response => {
         console.log(response);
         let users = [];
@@ -174,9 +172,8 @@ client.on("message", message => {
   }
 });
 
-// Redirect in-game messages to Discord channel
 bot.on("chat", (username, message) => {
-  // Ignore messages from the bot itself
+
   if (username === bot.username) return;
 
   channel.send(`${username}: ${message}`);
@@ -191,5 +188,5 @@ bot.on("kicked", () => {
 });
 bot.on("error", err => console.log(err));
 //console.log(bot);
-// Login Discord bot
+
 client.login(process.env.discordToken);
